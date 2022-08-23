@@ -1,0 +1,101 @@
+# Building up data using Elixir types
+
+## Introduction
+
+One of the first tasks when building a software system is understanding the data and the business rules that govern the application. This often sounds like an easy task, but it can be deceptively tricky.
+
+We'll illustrate this by building the data structure to represent video game collections. We'll start by look at each property in isolation to learn about the basic data types available in Elixir. We'll then contain these properties into a single type to use throughout our application.
+
+## Basic Types
+
+Elixir has many of the same types we come to expect such as strings, integers, floats, and booleans.
+
+```elixir
+# Binding a "String" to the variable title
+title = "Pac-man"
+# Binding an "Integer" to the variable release_year
+release_year = 1980
+# Binding a "Boolean" to the variable prototype?
+prototype? = false
+```
+
+We can perform mathematical operations as you'd expect on Integers and Floats as you'd expect.
+
+```elixir
+release_year + 5
+```
+
+However, concatenation of strings is a bit different. Instead of concatenating a string using an operator, we'll format our string by interpolating our value inside the string.
+
+```elixir
+"Ms. #{title}"
+```
+
+In addition to these types, Elixir also gives us a type called an Atom. An atom is a symbol that represents some fixed meaning in the application. For example, we could have a fixed selection of genres for video games where the genres are represented as atoms.
+
+```elixir
+genre = :arcade
+```
+
+It's not unusual for games to be associated with multiple genres, so let's change our `genre` variable to allow multiple atoms to represent multiple genres. We'll use a `List` to represent multiple genres.
+
+```elixir
+genres = [:arcade, :maze]
+```
+
+## Combining our basic types together using Maps
+
+We have several properties about our video game, but they're currently all defined as separate variables. It's a total hassle to pass these variable around separately, so lets use a complex type to group them in a single data type.
+
+Our first option is to store our variables in a `map`. A `map` allows us set and retrieve values using keys. Let's define a `map` for our video game using strings as keys. The variable on the right is bound to the string key on the left by a `hash rocket` (`=>`). You'll usually see this when working with maps (with one exception we'll get to in a moment).
+
+```elixir
+video_game = %{
+  "title" => title,
+  "release_year" => release_year,
+  "prototype?" => prototype?,
+  "genres" => genres
+}
+```
+
+We can access our values in the map by using "bracket notation" with our string key.
+
+```elixir
+video_game["title"]
+```
+
+Maps can accept any type as keys, but you'll most frequently see them used with strings (like above) and atoms. If you use an atom as a key, you might be inclined to write it using the hash rocket like above.
+
+```elixir
+video_game = %{
+  :title => title,
+  :release_year => release_year,
+  :prototype? => prototype?,
+  :genres => genres
+}
+```
+
+This is cumbersome to write, so Elixir provides some syntactic sugar to make this a bit easier. The colon (`:`) can follow the key name to replace the hash rocket when using atoms as keys.
+
+```elixir
+video_game_with_atom_keys = %{
+  title: title,
+  release_year: release_year,
+  prototype?: prototype?,
+  genres: genres
+}
+```
+
+## Structs
+
+defmodule VideoGame do
+
+```elixir
+defmodule VideoGame do
+  defstruct [:title, :release_year, :prototype?, :genres]
+
+  def new(attrs) do
+    attrs.attrs || attrs["genres"]
+  end
+end
+```
